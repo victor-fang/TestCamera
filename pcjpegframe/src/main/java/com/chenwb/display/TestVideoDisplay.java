@@ -2,6 +2,8 @@ package com.chenwb.display;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.ByteArrayInputStream;
@@ -10,37 +12,45 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 public class TestVideoDisplay extends JFrame {
-    private BufferedImage image;
-
+    private Graphics mGraphics;
 
     private TestVideoDisplay() {
         super("视频显示");
 
-        setSize(480, 320);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setBounds(30, 30, 450, 450);
 
         setVisible(true);
 
-        Graphics graphics = getGraphics();
+        mGraphics = getGraphics();
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                mGraphics = getGraphics();
+            }
+        });
 
         try {
-//            createSocketInputStream(graphics);
-            createSocket(graphics);
+            createSocket();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
+    @Override
+    public void paintComponents(Graphics g) {
+        super.paintComponents(g);
+        System.out.println("paintComponents ...");
+        mGraphics = g;
+    }
 
     public static void main(String[] args) {
         new TestVideoDisplay();
@@ -97,7 +107,7 @@ public class TestVideoDisplay extends JFrame {
         }
     }
 
-    private void createSocket(Graphics graphics) throws Exception {
+    private void createSocket() throws Exception {
         DatagramSocket socket = new DatagramSocket(10086);
         int maxImageSize = 1024 * 100;
         byte[] tempBuff = new byte[maxImageSize];
@@ -116,9 +126,10 @@ public class TestVideoDisplay extends JFrame {
             ByteArrayInputStream stream = new ByteArrayInputStream(packet.getData(),
                     packet.getOffset(), packet.getLength());
             BufferedImage image = ImageIO.read(stream);
-            System.out.println("image with = " + image.getWidth() + " height = " + image.getHeight()
+            System.out.println("image width = " + image.getWidth() + " height = " + image.getHeight()
                     + " packet = " + packet.getAddress() + " length = " + packet.getLength());
-            graphics.drawImage(image, 0, 0, getWidth(), (int) (getWidth() * (image.getHeight() * 1.0f / image.getWidth())), observer);
+            int width = getContentPane().getWidth();
+            mGraphics.drawImage(image, 0, 0, width, (int) (width * (image.getHeight() * 1.0f / image.getWidth())), observer);
             stream.close();
         }
     }

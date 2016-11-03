@@ -80,11 +80,25 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                camera.stopPreview();
-                camera.release();
-                socketClient.close();
+                stopCamera();
             }
         });
+    }
+
+    private void stopCamera() {
+        if (camera == null)
+            return;
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+        socketClient.close();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopCamera();
+        super.onDestroy();
     }
 
     @Override
