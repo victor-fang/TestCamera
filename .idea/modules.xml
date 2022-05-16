@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TestCamera.iml" filepath="$PROJECT_DIR$/TestCamera.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pcjpegframe/pcjpegframe.iml" filepath="$PROJECT_DIR$/pcjpegframe/pcjpegframe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.TestCamera.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.TestCamera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TestCamera.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TestCamera.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TestCamera.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TestCamera.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TestCamera.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TestCamera.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TestCamera.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TestCamera.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.iml" filepath="$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.main.iml" filepath="$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.test.iml" filepath="$PROJECT_DIR$/.idea/modules/pcjpegframe/TestCamera.pcjpegframe.test.iml" />
     </modules>
   </component>
 </project>
