@@ -1,17 +1,23 @@
 package com.chenweibin.testcamera;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +32,17 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
 
     private int previewFormat;
 
-    private UdpClient socketClient;
+    //private UdpClient socketClient;
+    private UdpServer socketServer;
+
+    public static String intToIp(int ipInt) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ipInt & 0xFF).append(".");
+        sb.append((ipInt >> 8) & 0xFF).append(".");
+        sb.append((ipInt >> 16) & 0xFF).append(".");
+        sb.append((ipInt >> 24) & 0xFF);
+        return sb.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +66,7 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
                 camera.setDisplayOrientation(90);
                 camera.setParameters(params);
                 camera.setPreviewCallback(MainActivity.this);
-                socketClient = new UdpClient();
+                //socketClient = new UdpClient();
                 try {
                     camera.setPreviewDisplay(sfv.getHolder());
                 } catch (IOException e) {
@@ -83,6 +99,32 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
                 stopCamera();
             }
         });
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            Log.i("TEST", "Granted");
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, 1);//1 can be another integer
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE)
+                == PackageManager.PERMISSION_GRANTED) {
+            Log.i("TEST", "Granted");
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);//1 can be another integer
+        }
+
+        WifiManager myWifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = myWifiManager.getConnectionInfo();
+        if (wifiInfo == null || wifiInfo.getIpAddress() == 0) {
+            Toast.makeText(MainActivity.this, "Wifi未连", Toast.LENGTH_LONG).show();
+        } else {
+            Log.i(TAG, " ip address " + intToIp(wifiInfo.getIpAddress()));
+        }
+
+        socketServer = new UdpServer(9099);
     }
 
     private void stopCamera() {
@@ -92,7 +134,7 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
         camera.stopPreview();
         camera.release();
         camera = null;
-        socketClient.close();
+        //socketClient.close();
     }
 
     @Override
@@ -110,7 +152,7 @@ public class MainActivity extends Activity implements PreviewCallback, Camera.Au
 
         yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 20, outStream);
         byte[] bytes = outStream.toByteArray();
-        socketClient.sentData(bytes, bytes.length);
+        //socketClient.sentData(bytes, bytes.length);
         Log.i(TAG, "Jpeg with = " + yuvImage.getWidth() + " height = " + yuvImage.getHeight() + " size = " + bytes.length);
     }
 
